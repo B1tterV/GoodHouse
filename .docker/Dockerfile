@@ -1,5 +1,5 @@
 # Build
-FROM node:20.19.4-alpine AS builder
+FROM node:20.17.0-alpine AS builder
 
 WORKDIR /var/www/app
 
@@ -15,7 +15,7 @@ COPY ./src .
 RUN yarn build
 
 # Run
-FROM node:20.19.4-alpine AS prod
+FROM node:20.17.0-alpine AS prod
 
 ENV NODE_ENV="production"
 ENV PORT="3000"

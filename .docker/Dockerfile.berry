@@ -1,5 +1,5 @@
 # Базовый образ с установленным Corepack и Yarn Berry
-FROM node:20.19.4-alpine AS base
+FROM node:20.17.0-alpine AS base
 
 # Устанавливаем необходимые утилиты
 RUN apk add --no-cache openssh-client git
