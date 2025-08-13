@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  web-app:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    ports:
+      - "${PORT:-3500}:3000"
+    environment:
+      - NODE_ENV=production
+    restart: always

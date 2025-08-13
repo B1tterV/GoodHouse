@@ -1,0 +1,54 @@
+# Базовый образ с установленным Corepack и Yarn Berry
+FROM node:20.19.4-alpine AS base
+
+# Устанавливаем необходимые утилиты
+RUN apk add --no-cache openssh-client git
+
+# Включаем Corepack и устанавливаем Yarn Berry
+RUN corepack enable && \
+    yarn set version berry && \
+    yarn config set nodeLinker node-modules
+
+# ---
+
+# Этап сборки
+FROM base AS builder
+
+# Создаем рабочую директорию
+WORKDIR /app
+
+# Копируем файлы зависимостей
+COPY src/package.json src/yarn.lock src/.yarnrc.yml ./
+
+# Устанавливаем зависимости
+RUN yarn install --immutable
+
+# Копируем весь исходный код приложения
+COPY src ./
+
+# Собираем приложение для production
+RUN yarn build
+
+# ---
+
+# Этап запуска
+FROM base AS runner
+
+# Устанавливаем переменные окружения
+#ENV NODE_ENV production
+ENV PORT 3000
+
+# Создаем рабочую директорию
+WORKDIR /app
+
+# Копируем собранное приложение из этапа сборки
+COPY --from=builder /app/.output .output
+
+# Копируем файлы зависимостей для production
+COPY src/package.json src/yarn.lock src/.yarnrc.yml ./
+
+# Устанавливаем production-зависимости с помощью yarn workspaces focus
+RUN yarn workspaces focus --production 
+
+# Запускаем приложение
+CMD ["node", ".output/server/index.mjs"]

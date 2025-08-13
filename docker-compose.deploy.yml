@@ -1,0 +1,9 @@
+services:
+  web-app:
+    image: $APP_IMAGE
+    ports:
+      - "${PORT:-3500}:3000"
+    environment:
+      NODE_ENV: production
+      # NUXT_PUBLIC_API_HOST: ${NUXT_PUBLIC_API_HOST:-}
+    restart: always

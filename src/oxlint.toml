@@ -1,0 +1,28 @@
+# Основные правила (аналоги ESLint)
+deny = [
+  # Ошибки
+  "no-var",               # Запрет `var` (используйте `let`/`const`)
+  "no-unused-vars",       # Неиспользуемые переменные
+  "no-dupe-args",         # Дублирование аргументов функции
+  "no-dupe-keys",         # Дублирование ключей в объектах
+  "no-empty",             # Пустые блоки `{}`
+  "no-console",           # Запрет `console.log` (можно разрешить для dev)
+  "no-debugger",          # Запрет `debugger`
+
+  # Стиль кода
+  "eqeqeq",               # Требует `===` вместо `==`
+  "no-mixed-spaces-and-tabs",  # Смешивание пробелов и табов
+  "no-trailing-spaces",   # Лишние пробелы в конце строк
+]
+
+# Разрешенные правила (исключения для Nuxt)
+allow = [
+  "no-console",           # Разрешить console.log в dev-режиме (можно настроить условием)
+  "no-await-in-loop",     # Разрешить await в циклах (иногда нужно в Nuxt)
+  "no-global-assign",     # Запрет перезаписи глобальных переменных (например, `useState`)
+]
+
+# Настройки для TypeScript
+[typescript]
+strict = true             # Проверка типов (аналог `strict: true` в tsconfig)
+noImplicitAny = true      # Запрет неявного `any`
