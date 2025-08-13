@@ -7,7 +7,7 @@ WORKDIR /app
 COPY ./src/package.json ./src/yarn.lock ./
 
 # 2. Устанавливаем ВСЕ зависимости
-RUN yarn install --frozen-lockfile
+RUN yarn install --pure-lockfile
 
 # 3. Копируем исходный код
 COPY ./src .
