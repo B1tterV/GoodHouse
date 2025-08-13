@@ -1,32 +1,31 @@
 # Stage 1: Build
-FROM node:20.19.0-alpine AS builder
+FROM node:20.19.4-alpine AS builder
 
 WORKDIR /app
 
 # 1. Копируем только файлы зависимостей
-COPY ./src/package*.json ./
-COPY ./src/yarn.lock ./
+COPY ./src/package.json ./src/yarn.lock ./
 
-# 2. Устанавливаем зависимости (без frozen-lockfile на этом этапе)
-RUN yarn install
+# 2. Устанавливаем ВСЕ зависимости
+RUN yarn install --frozen-lockfile
 
-# 3. Копируем остальные файлы
+# 3. Копируем исходный код
 COPY ./src .
 
 # 4. Собираем проект
 RUN yarn build
 
 # Stage 2: Production
-FROM node:20.19.0-alpine
+FROM node:20.19.4-alpine
 
 WORKDIR /app
 
+# Копируем только необходимые файлы
 COPY --from=builder /app/.output ./.output
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/yarn.lock ./
+COPY --from=builder /app/package.json ./app/yarn.lock ./
 
-# Здесь можно использовать --frozen-lockfile
-RUN yarn install --production --frozen-lockfile
+# Устанавливаем ТОЛЬКО production-зависимости (без --frozen-lockfile)
+RUN yarn install --production
 
 EXPOSE 3000
 CMD ["node", ".output/server/index.mjs"]
