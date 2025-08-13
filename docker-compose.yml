@@ -3,9 +3,30 @@ services:
   web-app:
     build:
       context: .
-      dockerfile: .docker/Dockerfile
+      dockerfile: .docker/Dockerfile.berry
     ports:
-      - "${PORT:-3500}:3000"
+      - "3000:3000"
     environment:
       - NODE_ENV=production
-    restart: always
+      - HOST=0.0.0.0
+    restart: unless-stopped
+    networks:
+      - web-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - web-app
+    restart: unless-stopped
+    networks:
+      - web-network
+
+networks:
+  web-network:
+    driver: bridge
