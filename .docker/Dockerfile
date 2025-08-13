@@ -1,30 +1,30 @@
-# Build
-FROM node:20.17.0-alpine AS builder
+# Stage 1: Build
+FROM node:20.11.0-alpine AS builder
 
-WORKDIR /var/www/app
+WORKDIR /app
 
 COPY ./src/package*.json ./
 COPY ./src/yarn.lock ./
 
-ENV NODE_OPTIONS="--max_old_space_size=2000"
-
-RUN yarn install --prefer-offline --pure-lockfile --non-interactive --production=false
-
 COPY ./src .
+
+RUN yarn install --frozen-lockfile
 
 RUN yarn build
 
-# Run
-FROM node:20.17.0-alpine AS prod
+# Stage 2: Production
+FROM node:20.17.0-alpine
 
-ENV NODE_ENV="production"
-ENV PORT="3000"
-WORKDIR /var/www/app
+WORKDIR /app
 
-COPY --from=builder /var/www/app/package.json ./package.json
-COPY --from=builder /var/www/app/yarn.lock ./yarn.lock
+# Копируем только необходимые файлы из стадии сборки
+COPY --from=builder /app/.output ./.output
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/yarn.lock ./yarn.lock
 
-COPY --from=builder /var/www/app/.output ./.output
+# Устанавливаем только production зависимости
+RUN yarn install --production --frozen-lockfile
 
-# Запускаем приложение
+EXPOSE 3000
+
 CMD ["node", ".output/server/index.mjs"]
