@@ -26,7 +26,11 @@ services:
     restart: unless-stopped
     networks:
       - web-network
+      - admin-network
 
 networks:
   web-network:
     driver: bridge
+  admin-network:
+    external: true
+    name: goodhousedashboard_admin-network
