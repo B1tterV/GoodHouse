@@ -221,5 +221,28 @@ const paymentCards = [
             margin-bottom: 24px;
         }
     }
+
+    @media (max-width: 1024px) {
+        &__content {
+            .payment{
+                &__cards{
+                    .payment-card{
+                        flex-direction: column;
+                        gap: 10px;
+
+                        &__content{
+                            .title{
+                                @include UI-14-20-600;
+                                margin-bottom: 10px;
+                            }
+                            .description{
+                                @include UI-14-20-400;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 </style>

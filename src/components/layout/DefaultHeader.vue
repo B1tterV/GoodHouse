@@ -10,17 +10,24 @@ import ShoppingBagIcon from '@/assets/icons/shopping-bag-03.svg'
 import BarChartIcon from '@/assets/icons/bar-chart-square-02.svg'
 import HeartRoundedIcon from '@/assets/icons/heart-rounded.svg'
 import ChevronDownIcon from '@/assets/icons/chevron-down.svg'
+import IconSearch from '@/assets/icons/search-sm.svg'
 
 // Components
 import BaseButton from '@/components/common/BaseButton.vue'
 import SearchInput from '@/components/common/SearchInput.vue'
 import MenuModal from '@/components/modals/MenuModal.vue'
+import MobileSearch from '@/components/modals/MobileSearch.vue'
+import MobileNavModal from '@/components/modals/MobileNavModal.vue'
+
+// composables
+import { useWindow } from '@/composables/useWindow';
 
 // Store
 import { useCartStore } from '@/stores/public/cart'
 
 const router = useRouter()
 const cartStore = useCartStore()
+const { middleWindow, tabletWindow } = useWindow();
 
 const navs = [
  { name: 'О компании', link: '/about-company'},
@@ -36,6 +43,8 @@ const navs = [
 const searchValue = ref<string>('')
 
 const menuModalIsOpen = ref<boolean>(false);
+const mobileNavIsOpen = ref<boolean>(false);
+const mobileSearchIsOpen = ref<boolean>(false);
 </script>
 
 <template>
@@ -50,21 +59,29 @@ const menuModalIsOpen = ref<boolean>(false);
             <LogoIcon class="logo" filled @click="router.push('/')"/>
             <div class="menu">
                 <BaseButton
+                    v-if="!tabletWindow"
                     color="dark"
                     text="Каталог"
                     :icon="MenuIcon"
                     @click.stop="menuModalIsOpen = !menuModalIsOpen"
                 />
-                <SearchInput v-model="searchValue"/>
+                <BaseButton
+                    v-if="middleWindow"
+                    class="menu__search-btn"
+                    color="dark"
+                    :icon="IconSearch"
+                    @click.stop="mobileSearchIsOpen = !mobileSearchIsOpen"
+                />
+                <SearchInput v-else v-model="searchValue"/>
             </div>
-            <div class="city">
+            <div v-if="!tabletWindow" class="city">
                 <div class="city__title">Ваш город</div>
                 <div class="city__current">
                     Набережные Челны
                     <ChevronDownIcon filled />
                 </div>
             </div>
-            <div class="phone">
+            <div v-if="!tabletWindow" class="phone">
                 <a href="tel:88552924542" class="phone__number">
                     8 8552 92 45 42
                 </a>
@@ -72,7 +89,7 @@ const menuModalIsOpen = ref<boolean>(false);
                     Заказать звонок
                 </a>
             </div>
-            <div class="buttons">
+            <div v-if="!tabletWindow" class="buttons">
                 <BaseButton color="gray" text="1" :icon="HeartRoundedIcon"/>
                 <BaseButton color="gray" text="2" :icon="BarChartIcon"/>
                 <BaseButton
@@ -83,13 +100,14 @@ const menuModalIsOpen = ref<boolean>(false);
                 />
             </div>
             <BaseButton
+                v-if="tabletWindow"
                 color="dark"
                 :icon="MenuIcon"
                 class="mobile-menu"
-                @click="menuModalIsOpen = !menuModalIsOpen"
+                @click="mobileNavIsOpen = !mobileNavIsOpen"
             />
         </div>
-        <div class="header__nav wrapper">
+        <div v-if="!tabletWindow" class="header__nav wrapper">
             <ul>
                 <li
                     v-for="(nav, navIndex) in navs"
@@ -100,15 +118,25 @@ const menuModalIsOpen = ref<boolean>(false);
                     </router-link>
                 </li>
             </ul>
-            <!--<div class="links">
-                <div class="link">Главная</div>
-            </div> -->
         </div>
 
         <MenuModal
             :is-open="menuModalIsOpen"
             @close="menuModalIsOpen = false"
             @click.stop
+        />
+        <MobileSearch
+            v-if="mobileSearchIsOpen"
+            v-model="searchValue"
+            @close="
+                mobileSearchIsOpen = false;
+                searchValue = ''
+            "
+        />
+        <MobileNavModal
+            v-if="mobileNavIsOpen"
+            :navs="navs"
+            @close="mobileNavIsOpen = false"
         />
     </header>
 </template>
@@ -145,6 +173,17 @@ const menuModalIsOpen = ref<boolean>(false);
             .search-input {
                 width: 622px;
             }
+
+            &__search-btn{
+                width: 42px;
+                padding: 0;
+                :deep(svg) {
+                    width: 24px;
+                    height: 24px;
+                    color: $icon-light;
+                    margin-bottom: 0;
+                }
+            }
         }
 
         .city{
@@ -162,6 +201,8 @@ const menuModalIsOpen = ref<boolean>(false);
         }
 
         .phone{
+            display: flex;
+            flex-direction: column;
             &__number{
                 @include UI-16-20-500;
                 margin-bottom: 2px;
@@ -194,6 +235,7 @@ const menuModalIsOpen = ref<boolean>(false);
             gap: 30px;
 
             .menu{
+                flex: 1;
                 .search-input {
                     width: 490px;
                 }
@@ -201,18 +243,13 @@ const menuModalIsOpen = ref<boolean>(false);
         }
 
         @media (max-width: 1439px) {
-            .buttons,
-            .phone,
-            .city {
-                display: none;
-            }
 
             .mobile-menu{
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 padding: 0;
-                width: 42px;
+                min-width: 42px;
             }
         }
     }
@@ -253,6 +290,16 @@ const menuModalIsOpen = ref<boolean>(false);
             svg {
                 color: $icon-gray;
             }
+        }
+    }
+
+    @media (max-width: 1024px) {
+        position: sticky;
+        top: 0;
+        z-index: 2000;
+
+        &__base{
+            position: relative;
         }
     }
 }

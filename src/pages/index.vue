@@ -341,5 +341,21 @@ const newsCards = [
       }
     }
   }
+
+  @media (max-width: 1024px) {
+    &__menu{
+      .nav-cards{
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    &__menu{
+      .nav-cards{
+        grid-template-columns: repeat(1, 1fr);
+      }
+    }
+  }
 }
 </style>

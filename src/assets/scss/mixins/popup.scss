@@ -1,0 +1,9 @@
+@mixin popup {
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: $block-gray-30p;
+    height: 100dvh;
+    width: 100dvw;
+    z-index: 1001;
+}

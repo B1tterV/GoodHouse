@@ -104,5 +104,35 @@ const email = ref<string>("")
             }
         }
     }
+
+    @media (max-width: 1024px) {
+        flex-direction: column;
+        gap: 40px;
+
+        &__form {
+            width: 100%;
+
+            .form-input{
+                .base-button{
+                    position: relative;
+                }
+                .base-input{
+                    max-width: 100% !important;
+                    width: 100%;
+                    margin-right: 10px;
+                }
+            }
+
+        }
+    }
+
+    @media (max-width: 520px) {
+        &__form {
+            .form-input{
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    }
 }
 </style>

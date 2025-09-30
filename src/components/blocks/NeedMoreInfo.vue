@@ -16,5 +16,15 @@ import PhoneCard from '@/components/cards/PhoneCard.vue';
     display: flex;
     gap: 16px;
     width: 100%;
+
+    @media (max-width: 1024px) {
+        flex-direction: column;
+
+        .phone-card {
+            height: 350px;
+            width: 100%;
+            min-width: auto;
+        }
+    }
 }
 </style>

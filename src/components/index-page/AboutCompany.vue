@@ -171,5 +171,9 @@ const advantageCards = [
             padding-top: 24px;
         }
     }
+
+    @media (max-width: 1024px) {
+        flex-direction: column;
+    }
 }
 </style>

@@ -1,12 +1,17 @@
 <script setup lang="ts">
+// composables
+import { useWindow } from '@/composables/useWindow';
+
 defineProps({
   filterTitle: { type: String, default: null }
 })
+
+const { smallWindow } = useWindow();
 </script>
 
 <template>
     <div class="page-filter-content wrapper">
-        <div class="page-filter-content__filters">
+        <div v-if="!smallWindow" class="page-filter-content__filters">
             <div v-if="filterTitle" class="filter-title">{{ filterTitle }}</div>
             <div class="filter-content">
                 <slot name="filter" />
@@ -87,6 +92,39 @@ defineProps({
 
             li {
                 @include UI-18-24-400;
+            }
+        }
+    }
+
+    @media (max-width: 1220px) {
+        gap: 30px;
+    }
+
+    @media (max-width: 1024px) {
+        padding: 0;
+
+        &__filters {
+            display: none;
+        }
+
+        &__content{
+            max-width: 100%;
+
+            :deep(.content-title) {
+                @include UI-20-20-400;
+                margin-bottom: 24px;
+            }
+            :deep(.content-description) {
+                @include UI-14-20-400;
+                margin-bottom: 24px;
+            }
+            :deep(.content-text) {
+                @include UI-14-20-400;
+            }
+            :deep(.content-list) {
+                li {
+                    @include UI-14-20-400;
+                }
             }
         }
     }

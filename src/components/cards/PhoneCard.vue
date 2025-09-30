@@ -39,5 +39,15 @@
         margin: auto;
         bottom: 0;
     }
+
+    @media (max-width: 1024px) {
+        &__phone{
+            @include UI-28-100p-500;
+        }
+
+        &__description{
+            @include UI-14-100p-400;
+        }
+    }
 }
 </style>

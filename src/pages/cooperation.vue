@@ -148,5 +148,35 @@ const navCards = [
             color: $icon-light !important;
         }
     }
+
+    @media (max-width: 1024px) {
+        &__content {
+            .coop{
+                &__info{
+                    border-radius: 16px;
+                    padding: 12px 12px;
+                    background: $block-gray;
+                    margin-bottom: 24px;
+
+                    .title{
+                        @include UI-16-20-500;
+                        margin-bottom: 12px;
+                    }
+
+                    p{
+                        @include UI-14-100p-400;
+                        color: $text-primary-opacity;
+
+                        &:not(:last-child) {
+                            margin-bottom: 12px;
+                        }
+                        &:last-child {
+                            margin-bottom: 10px;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 </style>

@@ -222,5 +222,24 @@ const sawnItems = [
             color: $icon-light;
         }
     }
+
+    @media (max-width: 1024px) {
+        &__content {
+            .sawn {
+                &__info{
+                    .sawn-items{
+                        .sawn-item{
+                            &__name {
+                                @include UI-14-20-600;
+                            }
+                            &__price {
+                                @include UI-14-20-400;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 </style>

@@ -129,5 +129,23 @@ import BaseButton from '@/components/common/BaseButton.vue'
         width: 44%;
       }
     }
+
+    @media (max-width: 1024px) {
+      flex-direction: column;
+      .info,
+      .photos{
+        width: 100%;
+      }
+      .photos{
+        &__cards {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          height: auto;
+          img {
+            width: 100%;
+          }
+        }
+      }
+    }
 }
 </style>

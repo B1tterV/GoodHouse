@@ -1,6 +1,5 @@
 <script setup lang="ts">
 // Modules
-import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 // Icons
@@ -9,6 +8,10 @@ import ChevronDownIcon from '@/assets/icons/chevron-down.svg'
 // Components
 import BaseSwiper from '@/components/swipers/BaseSwiper.vue';
 import ProductCard from '@/components/cards/ProductCard.vue'
+import ProductCardSkeleton from '@/components/cards/ProductCardSkeleton.vue';
+
+// Composables
+import { useWindowSize } from '@/composables/useWindowSize';
 
 // Types
 import type { PropType } from 'vue';
@@ -21,20 +24,19 @@ defineProps({
 })
 
 const router = useRouter()
+const { width: windowWidth, isLoading } = useWindowSize();
 
-const slidesPerView = ref<number>(5);
-
-const updateSlidesPerView = () => {
-    slidesPerView.value = window.innerWidth <= 1439 ? 3 : window.innerWidth <= 1720 ? 4 : 5;
-};
-
-onMounted(() => {
-    window.addEventListener('resize', updateSlidesPerView);
-    updateSlidesPerView(); // Инициализация при загрузке
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('resize', updateSlidesPerView);
+const slidesPerView = computed(() => {
+  if (windowWidth.value <= 800) {
+    return 1;
+  } else if (windowWidth.value <= 1024) {
+    return 2;
+  } else if (windowWidth.value <= 1439) {
+    return 3;
+  } else if (windowWidth.value <= 1720) {
+    return 4;
+  }
+  return 5;
 });
 </script>
 
@@ -52,20 +54,35 @@ onBeforeUnmount(() => {
                 :slides-per-view="slidesPerView"
                 :space-between="30"
             >
-                <template
-                    v-for="(productCard, productCardIndex) in items"
-                    :key="`productCard-${productCardIndex}`"
-                >
-                <ProductCard
-                    :tag="productCard.tag"
-                    :image="productCard.image"
-                    :prev-price="productCard.prevPrice"
-                    :current-price="productCard.currentPrice"
-                    :code="productCard.code"
-                    :description="productCard.description"
-                />
+                <template v-if="isLoading">
+                    <template
+                        v-for="index in slidesPerView"
+                        :key="`skeleton-${index}`"
+                    >
+                        <ProductCardSkeleton />
+                    </template>
+                </template>
+                <template v-else>
+                    <template
+                        v-for="(productCard, productCardIndex) in items"
+                        :key="`productCard-${productCardIndex}`"
+                    >
+                        <ProductCard
+                            :tag="productCard.tag"
+                            :image="productCard.image"
+                            :prev-price="productCard.prevPrice"
+                            :current-price="productCard.currentPrice"
+                            :code="productCard.code"
+                            :description="productCard.description"
+                        />
+                    </template>
                 </template>
             </BaseSwiper>
+        </div>
+        <div class="product-swiper__loading">
+            <div class="fake-product">
+
+            </div>
         </div>
     </div>
 </template>
@@ -124,6 +141,15 @@ onBeforeUnmount(() => {
             svg {
                 transform: rotate(-90deg);
                 color: $icon-red;
+            }
+        }
+    }
+
+    @media (max-width: 800px) {
+        :deep(.product-card) {
+            width: 100%;
+            .product-card__image {
+                height: auto;
             }
         }
     }

@@ -82,11 +82,11 @@ export default defineNuxtConfig({
       mobileMedium: 375,
       mobileWide: 500,
       tabletWide: 621,
-      tablet: 769,
-      tabletStart: 768,
-      desktop: 960,
-      desktopMedium: 1201,
-      desktopWide: 1600,
+      tablet: 1025,
+      tabletStart: 1025,
+      desktop: 1220,
+      desktopMedium: 1440,
+      desktopWide: 1720,
     },
   },
 
@@ -116,6 +116,7 @@ export default defineNuxtConfig({
           additionalData: `
             @import "~/assets/scss/color-variables";
             @import "~/assets/scss/fonts/typography";
+            @import "~/assets/scss/mixins/popup";
           `,
         },
       },

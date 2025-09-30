@@ -56,5 +56,41 @@ defineProps({
             margin-top: 24px;
         }
     }
+
+    @media (max-width: 1024px) {
+        &__image{
+            height: 50dvh;
+        }
+
+        &__card{
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            background: $block-dark-60p;
+            border-radius: 8px;
+
+            .title{
+                @include UI-16-20-500;
+                color: $text-light;
+            }
+            .description {
+                @include UI-14-100p-400;
+                margin-top: 8px;
+                color: $text-light;
+            }
+            .base-button {
+                @include UI-16-20-500;
+                margin-top: 24px;
+            }
+        }
+    }
+
+    @media (max-width: 550px) {
+        &__card{
+            max-width: calc(100% - 32px);
+        }
+    }
 }
 </style>

@@ -10,6 +10,9 @@ import ChevronDownIcon from '@/assets/icons/chevron-down.svg'
 import ServiceCard from '@/components/cards/ServiceCard.vue';
 import NeedHelpCard from '@/components/cards/NeedHelpCard.vue';
 
+// Composables
+import { useWindowSize } from '@/composables/useWindowSize';
+
 const router = useRouter()
 
 const servicesCards = [
@@ -51,19 +54,17 @@ const servicesCards = [
   }
 ]
 
-const slidesPerView = ref<number>(4);
+const { width: windowWidth } = useWindowSize();
 
-const updateSlidesPerView = () => {
-    slidesPerView.value = window.innerWidth <= 1439 ? 2 : window.innerWidth <= 1720 ? 3 : 4;
-};
-
-onMounted(() => {
-    window.addEventListener('resize', updateSlidesPerView);
-    updateSlidesPerView();
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('resize', updateSlidesPerView);
+const slidesPerView = computed(() => {
+  if (windowWidth.value <= 1024) {
+    return 1;
+  } else if (windowWidth.value <= 1439) {
+    return 2;
+  } else if (windowWidth.value <= 1720) {
+    return 3;
+  }
+  return 4;
 });
 </script>
 
@@ -155,43 +156,6 @@ onBeforeUnmount(() => {
 
     &__form{
         width: 517px;
-        .need-help{
-            margin-bottom: 16px;
-            background: $block-red;
-            border-radius: 8px;
-            padding: 24px;
-
-            &__title{
-                @include UI-28-100p-400;
-                margin-bottom: 8px;
-                color: $text-light;
-            }
-
-            &__description{
-                @include UI-18-24-400;
-                color: $text-light-opacity;
-                margin-bottom: 24px;
-            }
-
-            &__form{
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                margin-bottom: 16px;
-
-                .base-button {
-                    width: fit-content;
-                }
-            }
-
-            &__policy{
-                @include UI-14-100p-400;
-                color: $text-light-opacity;
-                a {
-                    color: $text-light-opacity;
-                }
-            }
-        }
 
         .phone-card{
             backdrop-filter: blur(20px);
@@ -216,6 +180,18 @@ onBeforeUnmount(() => {
                 right: 24px;
                 bottom: 0;
             }
+        }
+    }
+
+    @media (max-width: 1024px) {
+        flex-direction: column;
+
+        &__form{
+            width: 100%;
+        }
+
+        :deep(.service-card__image) {
+            height: 400px;
         }
     }
 }

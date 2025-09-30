@@ -102,6 +102,12 @@ const goPrev = () => {
             right: 17px;
         }
     }
+
+    @media (max-width: 1024px) {
+        &__arrow {
+            display: none;
+        }
+    }
 }
 
 :deep(.swiper-slide){

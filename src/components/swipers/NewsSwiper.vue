@@ -1,6 +1,5 @@
 <script setup lang="ts">
 // Modules
-import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 // Icons
@@ -9,6 +8,10 @@ import ChevronDownIcon from '@/assets/icons/chevron-down.svg'
 // Components
 import BaseSwiper from '@/components/swipers/BaseSwiper.vue';
 import NewsCard from '@/components/cards/NewsCard.vue';
+import NewsCardSkeleton from '@/components/cards/NewsCardSkeleton.vue';
+
+// Composables
+import { useWindowSize } from '@/composables/useWindowSize';
 
 // Types
 import type { PropType } from 'vue';
@@ -22,19 +25,19 @@ defineProps({
 
 const router = useRouter()
 
-const slidesPerView = ref<number>(5);
+const { width: windowWidth, isLoading } = useWindowSize();
 
-const updateSlidesPerView = () => {
-    slidesPerView.value = window.innerWidth <= 1439 ? 3 : window.innerWidth <= 1720 ? 4 : 5;
-};
-
-onMounted(() => {
-    window.addEventListener('resize', updateSlidesPerView);
-    updateSlidesPerView(); // Инициализация при загрузке
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('resize', updateSlidesPerView);
+const slidesPerView = computed(() => {
+  if (windowWidth.value <= 800) {
+    return 1;
+  } else if (windowWidth.value <= 1024) {
+    return 2;
+  } else if (windowWidth.value <= 1439) {
+    return 3;
+  } else if (windowWidth.value <= 1720) {
+    return 4;
+  }
+  return 5;
 });
 </script>
 
@@ -51,17 +54,28 @@ onBeforeUnmount(() => {
             <BaseSwiper
                 :slides-per-view="slidesPerView"
                 :space-between="30"
-            >
-                <template
-                    v-for="(newsCard, newsCardIndex) in items"
-                    :key="`newsCard-${newsCardIndex}`"
                 >
-                <NewsCard
-                    :image="newsCard.image"
-                    :date="newsCard.date"
-                    :description="newsCard.description"
-                    :link="newsCard.link"
-                />
+                <template v-if="isLoading">
+                    <template
+                    v-for="index in slidesPerView"
+                    :key="`news-skeleton-${index}`"
+                    >
+                    <NewsCardSkeleton />
+                    </template>
+                </template>
+                
+                <template v-else>
+                    <template
+                    v-for="(newsItem, index) in items"
+                    :key="`news-${index}`"
+                    >
+                    <NewsCard
+                        :image="newsItem.image"
+                        :date="newsItem.date"
+                        :description="newsItem.description"
+                        :link="newsItem.link"
+                    />
+                    </template>
                 </template>
             </BaseSwiper>
         </div>
@@ -119,6 +133,12 @@ onBeforeUnmount(() => {
                 transform: rotate(-90deg);
                 color: $icon-red;
             }
+        }
+    }
+
+    @media (max-width: 1024px) {
+        :deep(.news-card) {
+            max-width: 100%;
         }
     }
 }
