@@ -11,7 +11,7 @@ services:
       - HOST=0.0.0.0
     restart: unless-stopped
     networks:
-      - web-network
+      - tatroof-network
 
   nginx:
     image: nginx:alpine
@@ -25,16 +25,13 @@ services:
       - web-app
     restart: unless-stopped
     networks:
-      - web-network
+      - tatroof-network
       - admin-network
-      - fastapi-network
 
 networks:
-  web-network:
-    driver: bridge
+  tatroof-network:
+    external: true
+    name: tatroof-network
   admin-network:
     external: true
     name: goodhousedashboard_admin-network
-  fastapi-network:
-    external: true
-    name: goodhouseadmin_admin-network
