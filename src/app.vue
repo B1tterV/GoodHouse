@@ -13,13 +13,13 @@ const productStore = useProductsStore();
 async function getList() {
   const response = await productStore?.getCategories();
   if (response?.status?.value === "success") {
-    const data = response?.data?.value as CatalogNavCard[]
-    const allCards = data || []
+    const data = response?.data?.value
+    const allCards = data.data as CatalogNavCard[] || []
     if(!allCards.find(item => item.id === -1))
       allCards.push({
         id: -1,
-        icon: MenuIcon,
-        name: "Все материалы",
+        iconComponent: MenuIcon,
+        text: "Все материалы",
         slug: ''
       })
 

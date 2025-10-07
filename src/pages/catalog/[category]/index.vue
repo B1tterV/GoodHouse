@@ -35,7 +35,7 @@ const route = useRoute()
 const currentSlug = computed(() => route?.params!.category as string)
 
 const currentPage = ref<number>(1);
-const totalPages = ref<number>(17);
+const totalPages = ref<number>(1);
 
 const filters = ref<Array<{ title: string; items: FilterItem[]}>>([
   {
@@ -94,10 +94,10 @@ const filters = ref<Array<{ title: string; items: FilterItem[]}>>([
   }
 ])
 
-const products = ref(generateMockProducts(24))
+const products = ref()
 
-const changePage = () => {
-  products.value = generateMockProducts(24)
+const changePage = async () => {
+  await getProducts()
 }
 
 const helpItems = [
@@ -155,17 +155,27 @@ const crumbs = [
 ]
 
 async function getProducts() {
-  const response = await productStore?.getProducts(currentSlug.value);
-  if (response?.status?.value === "success") {
-    const data = response?.data?.value
-    console.log(data)
+  try {
+    const response = await productStore?.getProductsByCategory(
+      currentSlug.value,
+      { page: currentPage.value, size: 24 }
+    );
+    if (response?.status?.value === "success") {
+      const data = response?.data?.value
+      products.value = data?.items
+      totalPages.value = data.pages
+    } else {
+      console.warn('Не удалось получить продукты')
+    }
+  } catch {
+    console.warn('Не удалось получить продукты')
   }
 }
 
 onMounted(() => {
   setTimeout(async () => {
     await getProducts()
-  }, 10)
+  }, 100)
 });
 </script>
 
@@ -215,9 +225,12 @@ onMounted(() => {
                                 :tag="productCard.tag"
                                 :image="productCard.image"
                                 :prev-price="productCard.prevPrice"
-                                :current-price="productCard.currentPrice"
-                                :code="productCard.code"
-                                :description="productCard.description"
+                                :current-price="productCard.price"
+                                :discount="productCard.discount"
+                                :code="productCard.article"
+                                :description="productCard.text"
+                                :slug="productCard.slug"
+                                :categorySlug="currentSlug"
                             />
                           </div>
                         </div>

@@ -1,8 +1,8 @@
 export interface CatalogNavCard {
     id: number;
     icon?: string;
-    image?: string;
-    name: string;
+    iconComponent?: string;
+    text: string;
     slug: string
 }
 

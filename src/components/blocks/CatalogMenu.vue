@@ -31,7 +31,7 @@ const subcategories = ref<SubcategoryItem[] | null>(null)
 async function getSubcategories() {
     try {
         if (selectedCard.value?.id) {
-            const response = await productStore?.getSubcategories(selectedCard.value.id);
+            const response = await productStore?.getSubcategoriesByCategorySlug(selectedCard.value.slug);
             if (response?.status?.value === "success") {
               subcategories.value = response?.data?.value as SubcategoryItem[]
             }
@@ -49,12 +49,14 @@ const changeCategory = async (menuNavCard: CatalogNavCard) => {
 }
 
 onMounted(async () => {
-  if (menuNavCards.value) selectedCard.value = menuNavCards.value[0]
-  if (!props.showAllCard && menuNavCards.value?.find(e => e.id === -1)) {
-    menuNavCards.value = menuNavCards.value.pop()
-  }
+  setTimeout(async () => {
+      if (menuNavCards.value) selectedCard.value = menuNavCards.value[0]
+      if (!props.showAllCard && menuNavCards.value?.find(e => e.id === -1)) {
+        menuNavCards.value = menuNavCards.value.pop()
+      }
+      await getSubcategories()
+  }, 100);
 
-  await getSubcategories()
 });
 </script>
 
@@ -70,16 +72,16 @@ onMounted(async () => {
             <NavCard
                 v-for="(menuNavCard, menuNavCardsIndex) in menuNavCards"
                 :key="`menuNavCard-${menuNavCardsIndex}`"
-                :img="menuNavCard.image"
-                :icon="menuNavCard.icon"
-                :text="menuNavCard.name"
+                :img="menuNavCard.icon"
+                :icon="menuNavCard.iconComponent"
+                :text="menuNavCard.text"
                 :isActive="menuNavCard?.id === selectedCard?.id"
                 @click="changeCategory(menuNavCard)"
             />
         </div>
         <div v-if="selectedCard" class="catalog-menu__content">
             <div class="header">
-                <div class="header__title">{{ selectedCard.name }}</div>
+                <div class="header__title">{{ selectedCard.text }}</div>
                 <div v-if="isModal" class="header__link" @click="emit('close')">Скрыть меню</div>
             </div>
             <div v-if="subcategories" class="items">

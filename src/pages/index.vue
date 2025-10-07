@@ -256,9 +256,9 @@ const newsCards = [
         <NavCard
           v-for="(menuNavCard, menuNavCardsIndex) in menuNavCards"
           :key="`menuNavCard-${menuNavCardsIndex}`"
-          :img="menuNavCard.image"
-          :icon="menuNavCard.icon"
-          :text="menuNavCard.name"
+          :img="menuNavCard.icon"
+          :icon="menuNavCard.iconComponent"
+          :text="menuNavCard.text"
           :link="`/catalog/${menuNavCard.slug}`"
         />
       </div>

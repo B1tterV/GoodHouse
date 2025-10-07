@@ -18,10 +18,12 @@ const props = defineProps({
   tag: { type: String, default: null },
   image: { type: String, default: null },
   imageAlt: { type: String, default: null },
-  prevPrice: { type: Number, default: null },
+  discount: { type: Number, default: null },
   currentPrice: { type: Number, default: null },
   code: { type: Number, required: true },
   description: { type: String, required: true },
+  slug: { type: String, required: true },
+  categorySlug: { type: String, required: true },
 })
 
 const router = useRouter()
@@ -35,6 +37,18 @@ const formatedPrice = computed(() => {
         maximumFractionDigits: 0
     }).format(
         props.currentPrice,
+    )
+})
+
+const finallPrice = computed(() => {
+    const price = props.discount ? props.currentPrice * (1 - props.discount / 100) : props.currentPrice
+    return new Intl.NumberFormat("ru-RU", {
+        style: "currency",
+        currency: "RUB",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(
+        price,
     )
 })
 
@@ -58,14 +72,14 @@ const countInCart = computed(() => cartStore.cart.filter(item => item.code === p
         <div v-if="tag" class="product-card__tag">{{ tag }}</div>
         <div
             class="product-card__image"
-            @click="router.push('/catalog/test/test')"
+            @click="router.push(`/catalog/${categorySlug}/${slug}`)"
         >
             <img :src="image" :alt="imageAlt || description" width="234" height="176">
         </div>
-        <div class="product-card__content">
+        <div class="product-card__content" @click="router.push(`/catalog/${categorySlug}/${slug}`)">
             <div class="product-card__price">
-                <div class="preview-price">{{ prevPrice }}</div>
-                <div class="current-price">{{ formatedPrice }}</div>
+                <div v-if="discount" class="preview-price">{{ formatedPrice }}</div>
+                <div class="current-price">{{ finallPrice }}</div>
                 <div class="additional-price-text">шт</div>
             </div>
             <div class="product-card__code">{{ code }}</div>
@@ -124,7 +138,7 @@ const countInCart = computed(() => cartStore.cart.filter(item => item.code === p
         justify-content: center;
         width: 100%;
         height: 240px;
-        margin-bottom: 26px;
+        margin-bottom: 10px;
         border-radius: 8px;
         padding: 36px;
         transition: all 0.3s ease;
@@ -133,6 +147,7 @@ const countInCart = computed(() => cartStore.cart.filter(item => item.code === p
             object-fit: cover;
             width: 100%;
             height: 100%;
+            border-radius: 8px;
         }
     }
 
@@ -166,6 +181,9 @@ const countInCart = computed(() => cartStore.cart.filter(item => item.code === p
         @include UI-18-24-400;
         margin-bottom: 26px;
         transition: all 0.5s ease;
+        height: 72px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     &__buttons{

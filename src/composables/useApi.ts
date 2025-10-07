@@ -6,6 +6,7 @@ export function useApi<T>(
   url: string | (() => string),
   options: UseFetchOptions<T> = {},
   requestHeaders: object,
+  noCache: boolean = false
 ) {
   const config = useRuntimeConfig();
   const router = useRouter();
@@ -28,6 +29,10 @@ export function useApi<T>(
   const defaults: UseFetchOptions<T> = {
     baseURL: apiUrl,
     headers,
+
+    // Управление кэшированием Nuxt
+    key: noCache ? `${typeof url === 'string' ? url : url()}-${Date.now()}` : undefined,
+    getCachedData: noCache ? () => undefined : undefined,
 
     onResponse(_ctx) {
       // Здесь можно сделать что-нибудь с ответом

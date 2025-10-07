@@ -27,6 +27,7 @@ services:
     networks:
       - web-network
       - admin-network
+      - fastapi-network
 
 networks:
   web-network:
@@ -34,3 +35,6 @@ networks:
   admin-network:
     external: true
     name: goodhousedashboard_admin-network
+  fastapi-network:
+    external: true
+    name: goodhouseadmin_admin-network

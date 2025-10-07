@@ -15,9 +15,9 @@ defineProps({
 
 <template>
     <div class="product-card-counter">
-        <BaseButton color="gray" :icon="MinusIcon" @click="emit('remove')" />
+        <BaseButton color="gray" :icon="MinusIcon" @click.stop="emit('remove')" />
         <div class="product-card-counter__count">{{ count }}</div>
-        <BaseButton color="gray" :icon="PlusIcon" @click="emit('add')" />
+        <BaseButton color="gray" :icon="PlusIcon" @click.stop="emit('add')" />
     </div>
 </template>
 

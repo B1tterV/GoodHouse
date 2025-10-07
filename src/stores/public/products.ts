@@ -16,28 +16,13 @@ export const useProductsStore = defineStore("products", () => {
 
   const menuNavCards = ref<CatalogNavCard[] | null>(null)
 
-  async function getCategories() {
-    // const response = await useApi(`/api/categories`, {
-    //   method: "GET",
-    // }, {});
+  async function getCategories(params = { page: 1, limit: 10 }) {
+    const response = await useApi('/categories/', {
+      method: 'GET',
+      params
+    }, {})
 
-    // return response;
-
-    return {
-      status: {
-        value: "success"
-      },
-      data: {
-        value: [
-          { id: 1, icon: HomeSmileIcon, name: "Благоустройство", slug: 'catalog' },
-          { id: 2, icon: ForIcon, name: "Облицовочный кирпич", slug: 'catalog' },
-          { id: 3, icon: KrovlyaIcon, name: "Кровельные материалы", slug: 'catalog' },
-          { id: 4, icon: layersThreeIcon, name: "Обустройство кровли", slug: 'catalog' },
-          { id: 5, icon: PaintbucketIcon, name: "Строительные смеси", slug: 'catalog' },
-          { id: 6, icon: FormatSquareIcon, name: "Тротуарная плитка", slug: 'catalog' },
-        ]
-      }
-    }
+    return response
   }
 
   async function getSubcategories(id: number) {
@@ -48,12 +33,8 @@ export const useProductsStore = defineStore("products", () => {
     return response;
   }
 
-  async function getProducts(subcategorySlug: string) {
-    const response = await useApi(`/api/products/subcategory/${subcategorySlug}`, {
-      params: {
-        page: 1,
-        pageSize: 48,
-      },
+  async function getSubcategoriesByCategorySlug(slug: string) {
+    const response = await useApi(`/subcategories/category/${slug}`, {
       method: "GET",
     }, {});
 
@@ -61,18 +42,31 @@ export const useProductsStore = defineStore("products", () => {
   }
 
   async function getProduct(productSlug: string) {
-    const response = await useApi(`/api/products/details/${productSlug}`, {
+    const response = await useApi(`/products/${productSlug}`, {
       method: "GET",
-    }, {});
+    }, {}, true);
 
     return response;
+  }
+
+  async function getProductsByCategory(
+    category_slug: string,
+    params = { page: 1, size: 10 }
+  ) {
+    const response = await useApi(`/products/category/${category_slug}`, {
+      method: 'GET',
+      params
+    }, {})
+
+    return response
   }
 
   return {
     menuNavCards,
     getCategories,
     getSubcategories,
-    getProducts,
+    getSubcategoriesByCategorySlug,
+    getProductsByCategory,
     getProduct
   };
 });

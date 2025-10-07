@@ -15,8 +15,12 @@ import OurAdvantages from '~/components/blocks/OurAdvantages.vue';
 // Store
 import { useProductsStore } from "~/stores/public/products";
 
+const currentSlug = computed(() => route?.params!.slug as string)
+
 const productStore = useProductsStore();
 const route = useRoute()
+
+const productInfo = ref()
 
 const productsImages = [
   '/images/products/new-product-1.png',
@@ -148,25 +152,22 @@ const newProductCards = [
   }
 ]
 
-// async function getProducts() {
-//   const response = await productStore?.getProducts();
-//   if (response?.status?.value === "success") {
-//     const data = response?.data?.value
-//     console.log(data)
-//   }
-// }
+async function getProduct() {
+  const response = await productStore?.getProduct(currentSlug.value);
+  if (response?.status?.value === "success") {
+    const data = response?.data?.value
+    productInfo.value = data
+  }
+}
 
-onMounted(() => {
-    console.log(route)
-//   getProducts()
-});
+await getProduct()
 </script>
 
 <template>
     <div class="product-page">
         <div class="product wrapper">
             <div class="product__slider">
-                <ProductGallerySwiper :images="productsImages" />
+                <ProductGallerySwiper :images="productInfo.images" />
             </div>
             <div class="product__info">
                 <div class="actions">
